@@ -16,12 +16,12 @@ func AuthLogin(username string, password string) smtp.Auth {
 	return &GoogleAccountAuth{Username: username, Password: password}
 }
 
-// Start implements Auth.Start
+// Start implements smtp.Auth.Start
 func (g *GoogleAccountAuth) Start(server *smtp.ServerInfo) (string, []byte, error) {
 	return "LOGIN", []byte{}, nil
 }
 
-// Next implements Auth.Next
+// Next implements smtp.Auth.Next
 func (g *GoogleAccountAuth) Next(fromServer []byte, more bool) ([]byte, error) {
 	if more {
 		switch string(fromServer) {
@@ -33,5 +33,6 @@ func (g *GoogleAccountAuth) Next(fromServer []byte, more bool) ([]byte, error) {
 			return nil, errors.New("Unkown fromServer")
 		}
 	}
+
 	return nil, nil
 }

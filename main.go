@@ -4,14 +4,13 @@ import (
 	"crypto/tls"
 	"fmt"
 	"log"
-	"net/http"
 	"net/smtp"
 	"os"
 
 	"github.com/atsuya/eventarc-workspace-smtp-relay/auth"
 )
 
-func SendEmail(subject string, message string) {
+func main() {
 	smtphost := "smtp-relay.gmail.com"
 	smtpport := 587
 	hellohost := ""
@@ -19,6 +18,8 @@ func SendEmail(subject string, message string) {
 	password := os.Args[1]
 	from := ""
 	to := ""
+	subject := ""
+	body := ""
 
 	smtpserver := fmt.Sprintf("%s:%d", smtphost, smtpport)
 	client, err := smtp.Dial(smtpserver)
@@ -31,8 +32,9 @@ func SendEmail(subject string, message string) {
 	}
 
 	tlsconfig := &tls.Config{
-		InsecureSkipVerify: false,
 		ServerName:         smtphost,
+		InsecureSkipVerify: false,
+		MinVersion:         tls.VersionTLS13,
 	}
 	client.StartTLS(tlsconfig)
 
@@ -54,7 +56,7 @@ func SendEmail(subject string, message string) {
 		log.Panic(err)
 	}
 
-	data := fmt.Sprintf("To: %s\r\nSubject: %s\r\n\r\n%s", to, subject, message)
+	data := fmt.Sprintf("To: %s\r\nSubject: %s\r\n\r\n%s", to, subject, body)
 	_, err = writer.Write([]byte(data))
 	if err != nil {
 		log.Panic(err)
@@ -66,28 +68,4 @@ func SendEmail(subject string, message string) {
 	}
 
 	client.Quit()
-}
-
-func HandleEventarc(w http.ResponseWriter, r *http.Request) {
-	s := fmt.Sprintf("Detected change in Cloud Storage bucket: %s", string(r.Header.Get("Ce-Subject")))
-	log.Printf(s)
-
-	SendEmail("yo watch out", "read this shit")
-
-	fmt.Fprintln(w, s)
-}
-
-func main() {
-
-	http.HandleFunc("/", HandleEventarc)
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
-	log.Printf("Listening on port %s", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		log.Fatal(err)
-	}
 }
