@@ -7,7 +7,7 @@ import (
 	"net/smtp"
 	"os"
 
-	"github.com/atsuya/eventarc-workspace-smtp-relay/auth"
+	"github.com/atsuya/google-workspace-smtp-relay/auth"
 )
 
 func main() {

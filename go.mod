@@ -1,3 +1,3 @@
-module github.com/atsuya/eventarc-workspace-smtp-relay
+module github.com/atsuya/google-workspace-smtp-relay
 
 go 1.16
