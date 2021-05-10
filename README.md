@@ -1,2 +1,3 @@
-# eventarc-workspace-smtp-relay
-This repo contains an example of using Google Workspace SMTP relay server to send email from Cloud Run invoked by Eventarc.
+# workspace-smtp-relay
+
+This repo contains example code that uses Google Workspace SMTP relay server to send an email from GCP.
